@@ -33,10 +33,36 @@ def empty(v):
 
 
 # trackbars for light-adjustment parameters alpha, beta
-cv2.namedWindow("Light Adjustment")
-cv2.resizeWindow("Light Adjustment", 480, 120)
-cv2.createTrackbar("Alpha", "Light Adjustment", 1, 500, empty)
-cv2.createTrackbar("Beta", "Light Adjustment", 0, 200, empty)
+# cv2.namedWindow("Light Adjustment")
+# cv2.resizeWindow("Light Adjustment", 480, 120)
+# cv2.createTrackbar("Alpha", "Light Adjustment", 1, 500, empty)
+# cv2.createTrackbar("Beta", "Light Adjustment", 0, 200, empty)
+
+
+contrast = 0    # 初始化要調整對比度的數值
+brightness = 0  # 初始化要調整亮度的數值
+
+
+# 定義調整亮度對比的函式
+def adjust(i, c, b):
+    output = i * (c/100 + 1) - c + b    # 轉換公式
+    output = np.clip(output, 0, 255)
+    output = np.uint8(output)
+    cv2.imshow('Your Headshot', output)
+
+
+# 定義調整亮度函式
+def brightness_fn(val):
+    global snap, contrast, brightness
+    brightness = val - 100
+    adjust(snap, contrast, brightness)
+
+
+# 定義調整對比度函式
+def contrast_fn(val):
+    global snap, contrast, brightness
+    contrast = val - 100
+    adjust(snap, contrast, brightness)
 
 
 def speak(sentence):
@@ -88,6 +114,7 @@ def OutOfRangeWarning(image, rect_start_point, rect_end_point, box_upperLeft_col
     if warm:
         threading.Thread(target=speak, args=(txt,)).start()
         cv2.putText(image, txt, warning_message_pos, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 5, 4)
+
 
 def DistanceWarning(image, rect_start_point, rect_end_point, head_top_position, picture_h):
     # Below Directions are described in non-flipped way
@@ -462,10 +489,10 @@ while True:
                     real_x = int(face_landmarks.landmark[i].x * w)
                     real_y = int(face_landmarks.landmark[i].y * h)
                     landmarks_list.append((real_x, real_y))
-        '''
+
         # At the same time, we get skin color image here first for Function 5 later
-        cr, cb = find_skinColor_crcb()
-        skinImg = crcb_oval(original_frame, cr, cb)
+        # cr, cb = find_skinColor_crcb()
+        # skinImg = crcb_oval(original_frame, cr, cb)
 
         if len(landmarks_list) == 478:
             upper_x = landmarks_list[10][0]
@@ -474,7 +501,7 @@ while True:
             lower_y = landmarks_list[152][1]
             if upper_x and upper_y and lower_x and lower_y:
                 StraightWarning(warning_message3, upper_x, upper_y, lower_x, lower_y)
-            
+            '''
             # 【Function5】find specific landmarks of face mesh(for ear warning)
             # Right Ear
             rightEarPoints = get_rightEarPoint()
@@ -499,9 +526,9 @@ while True:
                 print("have left ear")
             else:
                 print("no left ear")
-            
-        '''
-        # 【Function5】create front detection
+            '''
+
+        # 【Function6】create front detection
         with mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence=0.5) as front_detection:
             image = original_frame.copy()
             # Flip the image horizontally for a later selfie-view display
@@ -604,14 +631,19 @@ while True:
                 picture = add_white_bg(picture)
             # light adjustment
             if light_enhance_flag:  # press "l" to use
-                # picture = aug(picture)
-                Alpha = cv2.getTrackbarPos("Alpha", "Light Adjustment") / 100
-                Beta = cv2.getTrackbarPos("Beta", "Light Adjustment")
-                picture = light_adjust(picture, Alpha, Beta)
+                picture = aug(picture)
 
             # resize frame into standard output size
             snap = cutEdge(box_upperLeft_col, box_h, box_w, picture)
             cv2.imshow('Your Headshot', snap)
+
+            cv2.namedWindow("Light Adjustment")
+            cv2.resizeWindow("Light Adjustment", 480, 120)
+            cv2.createTrackbar('brightness', "Light Adjustment", 0, 200, brightness_fn)  # 加入亮度調整滑桿
+            cv2.setTrackbarPos('brightness', "Light Adjustment", 100)
+            cv2.createTrackbar('contrast', "Light Adjustment", 0, 200, contrast_fn)  # 加入對比度調整滑桿
+            cv2.setTrackbarPos('contrast', "Light Adjustment", 100)
+
 
     # return value of reading the frame (ret) = False
     else:
