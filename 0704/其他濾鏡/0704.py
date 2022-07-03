@@ -56,7 +56,8 @@ def get_tri_pt_index_list(landmarks_points):
         index_pt1 = np.where((points == pt1).all(axis=1))[0]
         index_pt2 = np.where((points == pt2).all(axis=1))[0]
         index_pt3 = np.where((points == pt3).all(axis=1))[0]
-
+        
+        # 避免非關鍵點的三角形也計算進去
         if index_pt1.size != 0 and index_pt2.size != 0 and index_pt3.size != 0:
             list_index_tris.append((index_pt1[0], index_pt2[0], index_pt3[0]))
     return list_index_tris
@@ -69,14 +70,14 @@ def get_one_rect_from_tri(img, tri, landmarks):
     pt3 = landmarks[tri[2]]
     points = np.array([pt1, pt2, pt3], dtype=np.int32)
 
-    # 做一个外接矩形
+    # 建立一個外接矩形
     crop_rect = cv2.boundingRect(points)
     (x, y, w, h) = crop_rect
 
     # 計算三個頂點在外接矩形上的坐標((0,0)為起始點)
     points_in_rect = points - np.array([(x, y)])
 
-    # 擷取該圖片
+    # 截取該圖片
     crop_img = img[y:y + h, x:x + w]
 
     return crop_img, crop_rect, points_in_rect
@@ -160,7 +161,7 @@ while True:
         # img_src = cv2.imread('face/baijingting.jpg')
 
         # img_src = cv2.imread('face/angelababy.png')
-        img_src = cv2.imread('face/baijingting.png')
+        img_src = cv2.imread('face/baijingting.')
         img_src = cv2.resize(img_src, (0, 0), fx=0.5, fy=0.5)
         img_dst = frame
 
