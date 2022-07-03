@@ -1,5 +1,6 @@
 ### 功能說明： 動態換臉  
-程式參考於 https://gitee.com/yuhong-ldu/python-ai/tree/master/faceswap  
+程式參考於： https://gitee.com/yuhong-ldu/python-ai/tree/master/faceswap  
+影片講解： https://www.bilibili.com/video/BV1Pu41127Sx/?spm_id_from=333.788.recommend_more_video.13&vd_source=d6a93feb3f756069d65354c1bf74d5f3  
 原程式為靜態換臉，本程式更改為動態偵測並由傳入之照片進行換臉。  
 ### 執行前可能需要：
 1. 下載dlib的特殊套件「shape_predictor_68_face_landmarks.dat」  
