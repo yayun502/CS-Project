@@ -120,22 +120,22 @@ def get_face_cover(img_src, img_dst, landmarks_src, landmarks_dst, list_index_tr
 
 
 def face_swap(img_dst, img_cover, landmarks_dst):
-    # 获取人脸部分的凸包
+    # 得到人臉部分的convex
     img_dst_gray = cv2.cvtColor(img_dst, cv2.COLOR_BGR2GRAY)
     points = np.array(landmarks_dst, np.int32)
     convexhull = cv2.convexHull(points)
 
-    # 凸包填充，得到掩模，获取非人脸部分
+    # convex填滿255 得到mask以獲取非人臉部分
     face_mask = np.zeros_like(img_dst_gray)
     face_mask_255 = cv2.fillConvexPoly(face_mask, convexhull, 255)
     face_mask_0 = cv2.bitwise_not(face_mask_255)
     img_noface = cv2.bitwise_and(img_dst, img_dst, mask=face_mask_0)
 
-    # 将非人力脸 和人脸部分 叠加
+    # 將非人臉 和 人臉部分 疊加
     result = cv2.add(img_noface, img_cover)
     # cv2.imshow("Image_result", result)
 
-    # 颜色调整
+    # 顏色調整
     (x, y, w, h) = cv2.boundingRect(convexhull)
     center_face = (int((x + x + w) / 2), int((y + y + h) / 2))
 
@@ -149,32 +149,34 @@ while True:
     ret, frame = cap.read()
 
     if ret:
-        # 创建人脸检测器
+        # 建立人臉檢測器
         det_face = dlib.get_frontal_face_detector()
 
-        # 加载标志点检测器
+        # 載入標誌點檢測器
         det_landmarks = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")  # 68点
 
-        # 打开图片
+        # 載入圖片
         # img_dst = cv2.imread('face/sunhonglei.jpg')
         # img_src = cv2.imread('face/baijingting.jpg')
-        img_src = cv2.imread('face/baijingting.jpg')
+
+        # img_src = cv2.imread('face/angelababy.png')
+        img_src = cv2.imread('face/baijingting.png')
         img_src = cv2.resize(img_src, (0, 0), fx=0.5, fy=0.5)
         img_dst = frame
 
-        # 获取源图像的68个关键点的坐标
+        # 得到source image的68個關鍵點坐標
         landmarks_src = get_landmarks_points(img_src, det_face, det_landmarks)
 
-        # 获取目标图像的68个关键点的坐标
+        # 得到destination image的68個關鍵點坐標
         landmarks_dst = get_landmarks_points(img_dst, det_face, det_landmarks)
 
-        # 获取用来进行三角剖分的关键点的index——list
+        # 得到用來進行三角剖分的關鍵點的index list
         list_index_tris = get_tri_pt_index_list(landmarks_src)
 
-        # 获取目标图像中 需要替换的部分
+        # 得到destination image中 需要替換的部分
         img_cover = get_face_cover(img_src, img_dst, landmarks_src, landmarks_dst, list_index_tris)
 
-        # 进行人脸替换
+        # 進行人臉替換
         result = face_swap(img_dst, img_cover, landmarks_dst)
 
         # cv2.imshow("img src", img_src)
