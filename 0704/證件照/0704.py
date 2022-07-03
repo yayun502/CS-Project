@@ -3,6 +3,8 @@ import cv2
 import numpy as np
 import keyboard
 import mediapipe as mp
+import pyttsx3
+import threading
 
 from mediapipe.python.solutions.drawing_utils import _normalized_to_pixel_coordinates
 from rembg import remove
@@ -16,12 +18,14 @@ mp_face_detection = mp.solutions.face_detection
 cap = cv2.VideoCapture(0)
 size = np.array([(35, 45), (28, 35), (42, 47)])
 sizeIndex = 0
-light_enhance_flag = False
+light_enhance_flag = True
 beauty_face_flag = False
 segmentation_flag = True
 BG_COLOR = (255, 255, 255)  # white
 Alpha = 1.8
 Beta = 10
+s = pyttsx3.init()
+s.setProperty('rate', 200)
 
 
 def empty(v):
@@ -33,6 +37,11 @@ cv2.namedWindow("Light Adjustment")
 cv2.resizeWindow("Light Adjustment", 480, 120)
 cv2.createTrackbar("Alpha", "Light Adjustment", 1, 500, empty)
 cv2.createTrackbar("Beta", "Light Adjustment", 0, 200, empty)
+
+
+def speak(sentence):
+    s.say(sentence)
+    s.runAndWait()
 
 
 def detectBox(height, width, image):
@@ -57,15 +66,28 @@ def cutEdge(upperLeft, height, width, image):
 
 def OutOfRangeWarning(image, rect_start_point, rect_end_point, box_upperLeft_col, box_upperLeft_row, box_h, box_w):
     warning_message_pos = (40, 60)
+    txt = ""
+    warm = False
     if rect_end_point[0] > (box_upperLeft_col + box_w):
-        cv2.putText(image, 'PLEASE MOVE RIGHT', warning_message_pos, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 5, 4)
+        warm = True
+        txt = 'PLEASE MOVE RIGHT'
+        # cv2.putText(image, 'PLEASE MOVE RIGHT', warning_message_pos, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 5, 4)
     elif rect_end_point[1] > (box_upperLeft_row + box_h):
-        cv2.putText(image, 'PLEASE MOVE UP', warning_message_pos, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 5, 4)
+        warm = True
+        txt = 'PLEASE MOVE UP'
+        # cv2.putText(image, 'PLEASE MOVE UP', warning_message_pos, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 5, 4)
     elif rect_start_point[0] < box_upperLeft_col:
-        cv2.putText(image, 'PLEASE MOVE LEFT', warning_message_pos, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 5, 4)
+        warm = True
+        txt = 'PLEASE MOVE LEFT'
+        # cv2.putText(image, 'PLEASE MOVE LEFT', warning_message_pos, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 5, 4)
     elif rect_start_point[1] < box_upperLeft_row:
-        cv2.putText(image, 'PLEASE MOVE DOWN', warning_message_pos, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 5, 4)
+        warm = True
+        txt = 'PLEASE MOVE DOWN'
+        # cv2.putText(image, 'PLEASE MOVE DOWN', warning_message_pos, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 5, 4)
 
+    if warm:
+        threading.Thread(target=speak, args=(txt,)).start()
+        cv2.putText(image, txt, warning_message_pos, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 5, 4)
 
 def DistanceWarning(image, rect_start_point, rect_end_point, head_top_position, picture_h):
     # Below Directions are described in non-flipped way
@@ -90,6 +112,7 @@ def StraightWarning(image, upper_x, upper_y, lower_x, lower_y):
     message_pos = (40, 440)
     if slope_reciprocal > 0.05:
         cv2.putText(image, 'Stay straight!', message_pos, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 5, 4)
+        threading.Thread(target=speak, args=("Stay straight",)).start()
 
 
 def beauty_face(img):
@@ -110,6 +133,7 @@ def beauty_face(img):
 
 def light_adjust(img, alpha, beta):
     arr = np.array(img)
+
     for i in range(h):
         for j in range(w):
             for k in range(3):
@@ -173,6 +197,8 @@ def aug(src):
     """圖像亮度增強"""
     if get_lightness(src) > 130:
         print("圖片亮度足夠，不做增強")
+    else:
+        print("自動調整圖片亮度")
     # 先計算分位點，去掉像素值中少數異常值，這個分位點可以自己配置。
     # 比如1中直方圖的紅色在0到255上都有值，但是實際上像素值主要在0到20內。
     max_percentile_pixel, min_percentile_pixel = compute(src, 1, 99)
@@ -184,7 +210,6 @@ def aug(src):
     # 將分位值區間拉伸到0到255，這裏取了255*0.1與255*0.9是因爲可能會出現像素值溢出的情況，所以最好不要設置爲0到255。
     out = np.zeros(src.shape, src.dtype)
     cv2.normalize(src, out, 255 * 0.1, 255 * 0.9, cv2.NORM_MINMAX)
-
     return out
 
 
@@ -198,10 +223,10 @@ def get_lightness(src):
 
 def get_rightEarPoint():
     rightEar_point = []
-    earRight1_real_x = landmarks_list[127][0]- 8
-    earRight1_real_y = landmarks_list[127][1]- 8
-    earRight2_real_x = landmarks_list[234][0]- 6
-    earRight2_real_y = landmarks_list[234][1]- 6
+    earRight1_real_x = landmarks_list[127][0] - 8
+    earRight1_real_y = landmarks_list[127][1] - 8
+    earRight2_real_x = landmarks_list[234][0] - 6
+    earRight2_real_y = landmarks_list[234][1] - 6
     earRight3_real_x = landmarks_list[93][0] - 6
     earRight3_real_y = landmarks_list[93][1] - 6
     earRight4_real_x = landmarks_list[132][0] - 6
@@ -360,6 +385,7 @@ while True:
         warning_message1 = np.zeros((h, w, 3), dtype='uint8')
         warning_message2 = np.zeros((h, w, 3), dtype='uint8')
         warning_message3 = np.zeros((h, w, 3), dtype='uint8')
+        warning_message4 = np.zeros((h, w, 3), dtype='uint8')
 
         # 【Function2-1】create face detection
         with mp_face_detection.FaceDetection(model_selection=0, min_detection_confidence=0.5) as face_detection:
@@ -436,7 +462,7 @@ while True:
                     real_x = int(face_landmarks.landmark[i].x * w)
                     real_y = int(face_landmarks.landmark[i].y * h)
                     landmarks_list.append((real_x, real_y))
-
+        '''
         # At the same time, we get skin color image here first for Function 5 later
         cr, cb = find_skinColor_crcb()
         skinImg = crcb_oval(original_frame, cr, cb)
@@ -448,7 +474,7 @@ while True:
             lower_y = landmarks_list[152][1]
             if upper_x and upper_y and lower_x and lower_y:
                 StraightWarning(warning_message3, upper_x, upper_y, lower_x, lower_y)
-            '''
+            
             # 【Function5】find specific landmarks of face mesh(for ear warning)
             # Right Ear
             rightEarPoints = get_rightEarPoint()
@@ -461,7 +487,7 @@ while True:
                 print("have right ear")
             else:
                 print("no right ear")
-        
+
             # Left Ear
             leftEarPoints = get_leftEarPoint()
             count = 0
@@ -473,8 +499,88 @@ while True:
                 print("have left ear")
             else:
                 print("no left ear")
-            '''
+            
+        '''
+        # 【Function5】create front detection
+        with mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence=0.5) as front_detection:
+            image = original_frame.copy()
+            # Flip the image horizontally for a later selfie-view display
+            # Also convert the color space from BGR to RGB
+            image = cv2.cvtColor(cv2.flip(image, 1), cv2.COLOR_BGR2RGB)
+            # To improve performance
+            image.flags.writeable = False
+            # Get the result
+            results = front_detection.process(image)
+            # To improve performance
+            image.flags.writeable = True
+            # Convert the color space from RGB to BGR
+            image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
+            img_h, img_w, img_c = image.shape
+            face_3d = []
+            face_2d = []
+
+            if results.multi_face_landmarks:
+                for face_landmarks in results.multi_face_landmarks:
+                    for idx, lm in enumerate(face_landmarks.landmark):
+                        if idx == 33 or idx == 263 or idx == 1 or idx == 61 or idx == 291 or idx == 199:
+                            if idx == 1:
+                                nose_2d = (lm.x * img_w, lm.y * img_h)
+                                nose_3d = (lm.x * img_w, lm.y * img_h, lm.z * 8000)
+                            x, y = int(lm.x * img_w), int(lm.y * img_h)
+                            # Get the 2D Coordinates
+                            face_2d.append([x, y])
+                            # Get the 3D Coordinates
+                            face_3d.append([x, y, lm.z])
+                            # Convert it to the NumPy array
+                    face_2d = np.array(face_2d, dtype=np.float64)
+                    # Convert it to the NumPy array
+                    face_3d = np.array(face_3d, dtype=np.float64)
+                    # The camera matrix
+                    focal_length = 1 * img_w
+                    cam_matrix = np.array([[focal_length, 0, img_h / 2],
+                                           [0, focal_length, img_w / 2],
+                                           [0, 0, 1]])
+
+                    # The Distance Matrix
+                    dist_matrix = np.zeros((4, 1), dtype=np.float64)
+                    # Solve PnP
+                    success, rot_vec, trans_vec = cv2.solvePnP(face_3d, face_2d, cam_matrix, dist_matrix)
+                    # Get rotational matrix
+                    rmat, jac = cv2.Rodrigues(rot_vec)
+                    # Get angles
+                    angles, mtxR, mtxQ, Qx, Qy, Qz = cv2.RQDecomp3x3(rmat)
+                    # Get the y rotation degree
+                    x = angles[0] * 360
+                    y = angles[1] * 360
+                    # print(y)
+                    # See where the user's head tilting
+                    if y < -10:
+                        text = "Look Right"  # Looking Left
+                        threading.Thread(target=speak, args=("Look Right",)).start()
+                    elif y > 10:
+                        text = "Look Left"  # Looking Right
+                        threading.Thread(target=speak, args=("Look Left",)).start()
+                    elif x < -10:
+                        text = "Look Up"  # Looking Down
+                        threading.Thread(target=speak, args=("Look Up",)).start()
+                    elif x > 10:
+                        text = "Look Down"  # Looking Up
+                        threading.Thread(target=speak, args=("Look Down",)).start()
+                    else:
+                        text = ""
+                    '''
+                    # Display the nose direction
+                    nose_3d_projection, jacobian = cv2.projectPoints(nose_3d, rot_vec, trans_vec, cam_matrix, dist_matrix)
+
+                    p1 = (int(nose_2d[0]), int(nose_2d[1]))
+                    p2 = (int(nose_3d_projection[0][0][0]), int(nose_3d_projection[0][0][1]))
+
+                    cv2.line(image, p1, p2, (255, 0, 0), 2)
+                    '''
+                    # Add the text on the image
+                    # print(text)
+                    cv2.putText(warning_message4, text, (400, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 5, 4)
         final_dynamic_frame = frame
 
         # Displaying
@@ -482,6 +588,7 @@ while True:
         display_frame = cv2.add(flipped_frame, warning_message1)
         display_frame = cv2.add(display_frame, warning_message2)
         display_frame = cv2.add(display_frame, warning_message3)
+        # display_frame = cv2.add(display_frame, warning_message4)
         cv2.imshow('camera', display_frame)
 
         # Output picture file
@@ -497,13 +604,14 @@ while True:
                 picture = add_white_bg(picture)
             # light adjustment
             if light_enhance_flag:  # press "l" to use
-                Alpha = cv2.getTrackbarPos("Alpha", "Light Adjustment")/100
+                # picture = aug(picture)
+                Alpha = cv2.getTrackbarPos("Alpha", "Light Adjustment") / 100
                 Beta = cv2.getTrackbarPos("Beta", "Light Adjustment")
                 picture = light_adjust(picture, Alpha, Beta)
 
             # resize frame into standard output size
             snap = cutEdge(box_upperLeft_col, box_h, box_w, picture)
-            cv2.imshow('你的證件照', snap)
+            cv2.imshow('Your Headshot', snap)
 
     # return value of reading the frame (ret) = False
     else:
