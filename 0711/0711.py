@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response, request, url_for, redirect
 import cv2
 
 app = Flask(__name__)
@@ -17,6 +17,9 @@ def gen_frames():
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
+@app.route('/other')
+def other():
+    return render_template('other.html')
 
 @app.route('/video_feed')
 def video_feed():
