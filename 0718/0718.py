@@ -7,7 +7,8 @@ import mediapipe as mp
 
 from mediapipe.python.solutions.drawing_utils import _normalized_to_pixel_coordinates
 from rembg import remove
-from functions import detectBox, OutOfRangeWarning, DistanceWarning, StraightWarning, find_skinColor_crcb, crcb_oval, get_rightEarPoint, get_leftEarPoint
+from functions import detectBox, OutOfRangeWarning, DistanceWarning, StraightWarning, find_skinColor_crcb, crcb_oval,\
+    get_rightEarPoint, get_leftEarPoint
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -251,14 +252,20 @@ def gen_frames():
 def other():
     return render_template('other.html')
 
+
 @app.route('/video_feed')
 def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
-@app.route('/')
+@app.route('/index')
 def index():
     return render_template('index.html')
+
+
+@app.route('/')
+def home():
+    return render_template('home.html')
 
 
 if __name__ == '__main__':
