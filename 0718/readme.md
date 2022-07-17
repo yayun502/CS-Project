@@ -4,4 +4,5 @@
 3. 露耳警示字樣  
 
 尚未納入統整，網頁中不能作用(因為非程式執行介面)  
-p.s. 晚點我會美化證件照頁面
+p.s. 晚點我會美化證件照頁面 目前主頁面  
+<img src="https://user-images.githubusercontent.com/91117215/179391384-3113ef0e-93cd-413b-b681-7252b4b2d585.png" width="80%"/>
