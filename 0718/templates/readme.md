@@ -9,4 +9,17 @@ index_new(前一版本)/index_new2.html(最新版)是加了「開關切換(check
 「開關切換(checkbox用css變形)」：https://www.minwt.com/webdesign-dev/css/22150.html  
 「trackbar」:https://www.w3schools.com/howto/howto_js_rangeslider.asp
  ## 注意  
- *使用時可下載最新版本的index_new2.html，但記得檔名改為index.html，才能正確執行*
+ *使用時可下載最新版本的index_new2.html，但記得檔名改為index.html，才能正確執行*  
+   
+ ## 缺少
+ 1.證件照  
+ 如何傳參數(開關 & trackbar)  
+ 製作快門鍵  
+ 證件照檔案輸出   
+ 語音警示  
+ 等待processing頁面  
+ 2.其他濾鏡  
+ 證件照做出來應該很容易套用，所以這個項目不急   
+ 3.主頁  
+ 證件照尺寸、限制說明，可以做成modal，這個項目也不急
+ 
