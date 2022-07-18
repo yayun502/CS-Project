@@ -1,0 +1,214 @@
+<!--<!doctype html>-->
+<!--<html lang="en">-->
+
+<!--<head>-->
+<!--  &lt;!&ndash; Required meta tags &ndash;&gt;-->
+<!--  <meta charset="utf-8">-->
+<!--  <meta name="viewport" content="width=device-width, initial-scale=1">-->
+
+<!--  &lt;!&ndash; Bootstrap CSS &ndash;&gt;-->
+
+<!--  <meta name="viewport" content="width=device-width, initial-scale=1">-->
+<!--  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">-->
+
+<!--  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
+<!--  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>-->
+<!--</head>-->
+
+<!--<body>-->
+
+<!--  <nav class="navbar navbar-inverse">-->
+<!--    <div class="container-fluid">-->
+<!--      <div class="navbar-header">-->
+<!--        <a class="navbar-brand " href="{{ url_for('home') }}">WebSite</a>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </nav>-->
+<!--  <div class="container">-->
+
+<!--    <ul class="nav nav-tabs">-->
+<!--      <li class="active"><a href="{{ url_for('index') }}">證件照</a></li>-->
+<!--      <li><a href="{{ url_for('other') }}">其他濾鏡</a></li>-->
+<!--    </ul>-->
+
+<!--    <div class="tab-content">-->
+<!--      <div id="home" class="tab-pane fade in active" style="text-align:center;">-->
+<!--        <h3>Your Picture</h3>-->
+<!--        <img src="{{ url_for('video_feed') }}" style="display:block; margin:auto;"/>-->
+<!--        <h3> </h3>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</body>-->
+<!--</html>-->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>CS Project</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/favicon.ico') }}" />
+        <!-- Bootstrap Icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic" rel="stylesheet" type="text/css" />
+        <!-- SimpleLightbox plugin CSS-->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet" />
+        <style>
+            .switch { /*==設定開關鈕的長寬==*/
+              position: relative;
+              width: 65px;
+              height: 30px;
+              line-height: 30px;
+            }
+            .switch-checkbox {
+             position: absolute;
+             display: none;
+            }
+            .switch-label {
+              display: block;
+              overflow: hidden;
+              cursor: pointer;
+              border-radius: 20px;
+            }
+            .switch-txt {
+              display: block;
+              width: 200%;
+              margin-left: -100%;
+              transition: margin 0.3s ease-in 0s;
+            }
+            .switch-txt::before,
+            .switch-txt::after {
+              display: block;
+              float: right;
+              width: 50%;
+              font-size: 13px;
+              color: #fff;
+              font-weight: bold;
+              box-sizing: border-box;
+            }
+            /*==開關鈕底色(開啟時)==*/
+            .switch-txt::after {
+              content: attr(turnOn);
+              padding-left: 10px;
+              background: #1ba0ef;
+              color: #fff;
+            }
+            /*開關鈕底色(關閉時)*/
+            .switch-txt::before {
+              content: attr(turnOff);
+              padding-right: 10px;
+              background: #eee;
+              color: #ccc;
+              text-align: right;
+            }
+            /*==開關鈕的顏色與大小==*/
+            .switch-Round-btn {
+              position: absolute;
+              display: block;
+              width: 26px;
+              height: 26px;
+              margin: 2px;
+              background: #fff;
+              top: 0;
+              bottom: 0;
+              right: 35px;
+              border-radius: 13px;
+              transition: all 0.3s ease-in 0s;
+            }
+            .switch-checkbox:checked + .switch-label .switch-txt {
+              margin-left: 0;
+            }
+            .switch-checkbox:checked + .switch-label .switch-Round-btn{
+              right: 0;
+            }
+            .flex-container{
+              display: flex;
+              flex-direction:row;
+              flex-wrap: wrap;
+              justify-content: space-evenly;
+              align-content: baseline;
+            }
+        </style>
+    </head>
+    <body id="page-top">
+    <!-- Portfolio-->
+    <div id="portfolio">
+        <div class="container-fluid p-0">
+            <div class="row g-0">
+                <div class="col-lg-3 col-sm-6">
+                    <a class="portfolio-box" href="{{ url_for('index') }}">
+                        <img class="img-fluid" src="{{ url_for('static', filename='assets/img/portfolio/thumbnails/1.jpg') }}" alt="..." />
+                        <div class="portfolio-box-caption">
+                            <div class="project-category text-white-50">option 1</div>
+                            <div class="project-name">2吋大頭照</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <a class="portfolio-box" href="{{ url_for('index') }}">
+                        <img class="img-fluid" src="{{ url_for('static', filename='assets/img/portfolio/thumbnails/5.jpg') }}" alt="..." />
+                        <div class="portfolio-box-caption">
+                            <div class="project-category text-white-50">option 2</div>
+                            <div class="project-name">1吋證件照</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <a class="portfolio-box" href="{{ url_for('index') }}">
+                        <img class="img-fluid" src="{{ url_for('static', filename='assets/img/portfolio/thumbnails/3.jpg') }}" alt="..." />
+                        <div class="portfolio-box-caption">
+                            <div class="project-category text-white-50">option 3</div>
+                            <div class="project-name">2吋半身照</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <a class="portfolio-box" href="{{ url_for('home') }}">
+                        <img class="img-fluid" src="{{ url_for('static', filename='assets/img/portfolio/thumbnails/4.jpg') }}" alt="..." />
+                        <div class="portfolio-box-caption">
+                            <div class="project-name">Back to Home page</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="page-section bg-dark text-light">
+        <div class="flex-container">
+            <div>
+                <h4 class="mb-4">Your Picture</h4>
+            </div>
+            <div>
+                <img src="{{ url_for('video_feed') }}"/>
+            </div>
+            <div>
+                <h4>人臉美化</h4>
+                <div class="switch">
+                    <input class="switch-checkbox" id="switchID1" type="checkbox" name="switch-checkbox">
+                    <label class="switch-label" for="switchID1">
+                        <span class="switch-txt" turnOn="On" turnOff="Off"></span>
+                        <span class="switch-Round-btn"></span>
+                    </label>
+                </div><br>
+                <h4>去背</h4>
+                <div class="switch">
+                    <input class="switch-checkbox" id="switchID2" type="checkbox" name="switch-checkbox">
+                    <label class="switch-label" for="switchID2">
+                        <span class="switch-txt" turnOn="On" turnOff="Off"></span>
+                        <span class="switch-Round-btn"></span>
+                    </label>
+                </div><br>
+            </div>
+        </div>
+    </section>
+
+    </body>
+</html>
