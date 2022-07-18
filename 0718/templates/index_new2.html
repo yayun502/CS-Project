@@ -1,46 +1,3 @@
-<!--<!doctype html>-->
-<!--<html lang="en">-->
-
-<!--<head>-->
-<!--  &lt;!&ndash; Required meta tags &ndash;&gt;-->
-<!--  <meta charset="utf-8">-->
-<!--  <meta name="viewport" content="width=device-width, initial-scale=1">-->
-
-<!--  &lt;!&ndash; Bootstrap CSS &ndash;&gt;-->
-
-<!--  <meta name="viewport" content="width=device-width, initial-scale=1">-->
-<!--  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">-->
-
-<!--  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
-<!--  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>-->
-<!--</head>-->
-
-<!--<body>-->
-
-<!--  <nav class="navbar navbar-inverse">-->
-<!--    <div class="container-fluid">-->
-<!--      <div class="navbar-header">-->
-<!--        <a class="navbar-brand " href="{{ url_for('home') }}">WebSite</a>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </nav>-->
-<!--  <div class="container">-->
-
-<!--    <ul class="nav nav-tabs">-->
-<!--      <li class="active"><a href="{{ url_for('index') }}">證件照</a></li>-->
-<!--      <li><a href="{{ url_for('other') }}">其他濾鏡</a></li>-->
-<!--    </ul>-->
-
-<!--    <div class="tab-content">-->
-<!--      <div id="home" class="tab-pane fade in active" style="text-align:center;">-->
-<!--        <h3>Your Picture</h3>-->
-<!--        <img src="{{ url_for('video_feed') }}" style="display:block; margin:auto;"/>-->
-<!--        <h3> </h3>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</body>-->
-<!--</html>-->
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -197,8 +154,9 @@
                         <span class="switch-txt" turnOn="On" turnOff="Off"></span>
                         <span class="switch-Round-btn"></span>
                     </label>
-                </div><br>
-                <h4>去背</h4>
+                </div><br><br>
+
+                <h4>亮度調節</h4>
                 <div class="switch">
                     <input class="switch-checkbox" id="switchID2" type="checkbox" name="switch-checkbox">
                     <label class="switch-label" for="switchID2">
@@ -206,6 +164,21 @@
                         <span class="switch-Round-btn"></span>
                     </label>
                 </div><br>
+                <div>
+                    <h6>Brightness</h6>
+                    <input type="range" min="0" max="200" value="100" class="slider" id="brightness">
+                    <h6>Contrast</h6>
+                    <input type="range" min="0" max="200" value="100" class="slider" id="contrast">
+                </div><br><br>
+
+                <h4>去背</h4>
+                <div class="switch">
+                    <input class="switch-checkbox" id="switchID3" type="checkbox" name="switch-checkbox">
+                    <label class="switch-label" for="switchID3">
+                        <span class="switch-txt" turnOn="On" turnOff="Off"></span>
+                        <span class="switch-Round-btn"></span>
+                    </label>
+                </div><br><br>
             </div>
         </div>
     </section>
