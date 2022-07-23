@@ -3,3 +3,6 @@ https://stackoverflow.com/questions/70231327/flask-get-checkbox-value-without-su
 
 https://blog.csdn.net/woshicver/article/details/118865745
 看到他人做法：棄用checkbox，使用submit來切換
+
+
+我再努力看看 為什麼會卡納摸久TT
