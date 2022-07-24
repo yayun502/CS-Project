@@ -51,8 +51,10 @@ def gen_frames():
             # special functions
             if beauty_face_flag:
                 frame = beauty_face(frame)
+                original_frame = beauty_face(original_frame)
             if light_enhance_flag:
                 frame = aug(frame)
+                original_frame = aug(original_frame)
             # Draw a green detect box
             box_upperLeft_col, box_upperLeft_row, box_h, box_w = detectBox(h, w, frame)
             # Draw canvas for warning message
@@ -279,14 +281,6 @@ def gen_frames():
 
 @app.route('/other', methods=['GET', 'POST'])
 def other():
-    # if request.method == 'POST':
-    #     # do stuff when the form is submitted
-    #
-    #     # redirect to end the POST handling
-    #     # the redirect can be to the same route or somewhere else
-    #     return redirect(url_for('index'))
-
-    # show the form, it wasn't submitted
     return render_template('other.html')
 
 
